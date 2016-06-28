@@ -257,11 +257,7 @@ class CorbinFisher(Agent.Movies):
             cname = cast.strip()
             if (len(cname) > 0):
                 role = metadata.roles.new()
-<<<<<<< HEAD
-                role.actor = cname
-=======
                 role.name = cname
->>>>>>> 110d9ac34a28c062f6b1fde25f7ac91ffeeff369
                 actor_count += 1
         return actor_count
 
