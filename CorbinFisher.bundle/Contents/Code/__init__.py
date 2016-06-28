@@ -172,7 +172,9 @@ class CorbinFisher(Agent.Movies):
         html = ''
         browser = webdriver.PhantomJS()
         try:
-            browser.set_window_size(1920, 1080)
+            browser.implicitly_wait(30)
+            browser.set_page_load_timeout(30)
+            browser.set_window_size(1280, 720)
             self.Log("UPDATE - Loading %s" % url)
             browser.get(url)
 
@@ -185,8 +187,8 @@ class CorbinFisher(Agent.Movies):
             sleep(5)
             html = tree.fromstring(browser.execute_script(
                 "return document.getElementsByTagName('html')[0].innerHTML"))
-        except:
-            self.Log("UPDATE - Exception while running PhantomJS")
+        except Exception as ex:
+            self.Log("UPDATE - Exception while running PhantomJS: %s" % ex)
             raise
         finally:
             self.Log("UPDATE - Qutting PhantomJS")
