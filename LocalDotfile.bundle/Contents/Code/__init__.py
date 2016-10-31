@@ -73,30 +73,35 @@ class LocalDotfile(Agent.Movies):
 
             self.Log('UPDATE - video_title: "%s"' % video_title)
 
-            # TODO: Update thumbnail and cover data
-            # valid_image_names = list()
-            # i = 0
-            # self.Log('UPDATE - video_image_list: "%s"' % video_image_list)
-            # try:
-            #    coverPrefs = Prefs['cover']
-            #    for image in video_image_list:
-            #        if i != coverPrefs or coverPrefs == "all available":
-            #            thumb_url = image.get('src')
-            #            # self.Log('UPDATE - thumb_url: "%s"' % thumb_url)
-            #            poster_url = thumb_url.replace('300h', '1920w')
-            #            # self.Log('UPDATE - poster_url: "%s"' % poster_url)
-            #            valid_image_names.append(poster_url)
-            #            if poster_url not in metadata.posters:
-            #                try:
-            #                    i += 1
-            #                    metadata.posters[poster_url] = \
-            #                       Proxy.Preview(HTTP.Request(thumb_url),
-            #                                                  sort_order = i)
-            #                except: pass
-            #   metadata.posters.validate_keys(valid_image_names)
-            # except Exception as e:
-            #    self.Log('UPDATE - Error getting posters: %s' % e)
-            #    pass
+            # Update thumbnail and cover data
+            valid_image_names = []
+            i = 0
+            self.Log("UPDATE - video_image_list")
+            try:
+                coverPrefs = Prefs['cover']
+            except ValueError:
+                coverPrefs = None
+
+            try:
+                for thumb_url, poster_url in \
+                        metadata_dict["posters"].iteritems():
+                    if coverPrefs and i > coverPrefs:
+                        break
+                    self.Log('UPDATE - thumb_url: "%s"' % thumb_url)
+                    self.Log('UPDATE - poster_url: "%s"' % poster_url)
+                    valid_image_names.append(poster_url)
+                    if poster_url not in metadata.posters:
+                        try:
+                            i += 1
+                            metadata.posters[poster_url] = \
+                                Proxy.Preview(HTTP.Request(thumb_url),
+                                              sort_order=i)
+                        except:
+                            pass
+                metadata.posters.validate_keys(valid_image_names)
+            except Exception as e:
+                self.Log('UPDATE - Error getting posters: %s' % e)
+                pass
 
             # Try to get description text
             about_text = metadata_dict["description"]
