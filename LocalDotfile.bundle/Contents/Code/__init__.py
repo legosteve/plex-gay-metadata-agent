@@ -65,7 +65,7 @@ class LocalDotfile(Agent.Movies):
             self.Log('UPDATE - File Path: %s' % file_path)
             self.Log('UPDATE - metadata.id: %s' % metadata.id)
 
-            metadata_dict = json.load(Data.Load(metadata.id))
+            metadata_dict = json.loads(Data.Load(metadata.id))
 
             # Set tagline to URL
             metadata.tagline = metadata_dict["description_url"]
