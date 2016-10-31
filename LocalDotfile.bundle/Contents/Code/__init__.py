@@ -115,7 +115,7 @@ class LocalDotfile(Agent.Movies):
                     actor = actor.strip()
                     if (len(actor) > 0):
                         role = metadata.roles.new()
-                        role.actor = actor
+                        role.name = actor
 
             # Try to get and process the video genres
             metadata.genres.clear()
