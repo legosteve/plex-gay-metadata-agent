@@ -78,7 +78,7 @@ class LocalDotfile(Agent.Movies):
             i = 0
             self.Log("UPDATE - video_image_list")
             try:
-                coverPrefs = Prefs['cover']
+                coverPrefs = int(Prefs['cover'])
             except ValueError:
                 coverPrefs = None
 
