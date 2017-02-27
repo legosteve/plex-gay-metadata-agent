@@ -148,12 +148,16 @@ class SeanCody(Agent.Movies):
 
         # convert the gallery source variable to parseable JSON and then
         # grab the useful bits out of it
-        gallery_info = \
-            json.loads(html.xpath('/html/body/div[1]/div/div/section[2]/'
-                                  'div/script/text()')[0].
-                       replace('\n', '').
-                       replace('var gallerySource = ', '').
-                       replace('};', '}'))
+        try:
+            gallery_info = \
+                json.loads(html.xpath('/html/body/div[1]/div/div/section[2]/'
+                                      'div/script/text()')[0].
+                           replace('\n', '').
+                           replace('var gallerySource = ', '').
+                           replace('};', '}'))
+        except Exception, ex:
+            self.Log("Exception raised while getting gallery info: %s" % ex)
+            return []
 
         try:
             coverPrefs = int(Prefs['cover'])
