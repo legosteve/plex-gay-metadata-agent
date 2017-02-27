@@ -130,7 +130,7 @@ class SeanCody(Agent.Movies):
             cname = cast.strip()
             if (len(cname) > 0):
                 role = metadata.roles.new()
-                role.actor = cname
+                role.name = cname
 
     def fetch_genre(self, html, metadata):
         metadata.genres.clear()
@@ -148,45 +148,39 @@ class SeanCody(Agent.Movies):
 
         # convert the gallery source variable to parseable JSON and then
         # grab the useful bits out of it
+        valid_image_names = []
+
         try:
-            gallery_info = \
-                json.loads(html.xpath('/html/body/div[1]/div/div/section[2]/'
-                                      'div/script/text()')[0].
-                           replace('\n', '').
-                           replace('var gallerySource = ', '').
-                           replace('};', '}'))
+            image_list = html.xpath('//section[@class="photo-gallery"]/div/'
+                                    'div/div/ul/li/a/img')
         except Exception, ex:
             self.Log("Exception raised while getting gallery info: %s" % ex)
-            return []
+            return valid_image_names
+
+        gallery_length = len(image_list)
+        self.Log("Got %d images in gallery." % gallery_length)
 
         try:
             coverPrefs = int(Prefs['cover'])
         except ValueError:
-            # an absurdly high number means "download all the things"
-            coverPrefs = 10000
+            coverPrefs = gallery_length
 
-        thumb_path = gallery_info['thumb']['path']
-        thumb_hash = gallery_info['thumb']['hash']
-        poster_path = gallery_info['fullsize']['path']
-        poster_hash = gallery_info['fullsize']['hash']
-        gallery_length = int(gallery_info['length'])
-        valid_image_names = []
-
-        for i in xrange(1, gallery_length + 1):
+        i = 0
+        for image in image_list:
             if i > coverPrefs:
                 break
 
-            thumb_url = "%s%02d.jpg%s" % (thumb_path, i, thumb_hash)
-            poster_url = "%s%02d.jpg%s" % (poster_path, i, poster_hash)
+            thumb_url = image.get('src')
+            poster_url = thumb_url
 
-            valid_image_names.append(poster_url)
+            valid_image_names.append(thumb_url)
             if poster_url not in metadata.posters:
                 try:
                     i += 1
                     metadata.posters[poster_url] = \
                         Proxy.Preview(HTTP.Request(thumb_url), sort_order=i)
                 except:
-                    pass
+                    self.Log("Error getting thumb at %s" % thumb_url)
 
         return valid_image_names
 
@@ -213,28 +207,38 @@ class SeanCody(Agent.Movies):
         # Try to get description text
         try:
             self.fetch_summary(html, metadata)
-        except:
+        except Exception, ex:
+            self.Log("Error getting summary: %s" % ex)
             pass
 
         # Try to get release date
         try:
             self.fetch_release_date(html, metadata)
-        except:
+        except Exception, ex:
+            self.Log("Error getting release date: %s" % ex)
             pass
 
         # Try to get and process the video cast
         try:
             self.fetch_roles(html, metadata)
-        except:
+        except Exception, ex:
+            self.Log("Error getting roles: %s" % ex)
             pass
 
         # Try to get and process the video genres
         try:
-            self.fetch_genres(html, metadata)
-        except:
+            self.fetch_genre(html, metadata)
+        except Exception, ex:
+            self.Log("Error getting genres: %s" % ex)
             pass
 
-        valid_image_names = self.fetch_gallery(html, metadata)
+        try:
+            valid_image_names = self.fetch_gallery(html, metadata)
+        except Exception, ex:
+            self.Log("Error getting gallery: %s" % ex)
+            valid_image_names = []
+            pass
+
         metadata.posters.validate_keys(valid_image_names)
 
         metadata.content_rating = 'X'
