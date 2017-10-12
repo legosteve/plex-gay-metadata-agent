@@ -62,7 +62,7 @@ class SeanCody(Agent.Movies):
         if not filename:
             return
 
-        (file_title, ext) = os.path.splitext(filename.lower())
+        (file_title, _) = os.path.splitext(os.path.basename(filename.lower()))
         final_dir = os.path.basename(os.path.dirname(filename.lower()))
         self.Log('SEARCH - Enclosing Folder: %s', final_dir)
 
