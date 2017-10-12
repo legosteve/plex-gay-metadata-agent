@@ -36,6 +36,7 @@ class CorbinFisher(Agent.Movies):
     name = 'CorbinFisher'
     languages = [Locale.Language.NoLanguage, Locale.Language.English]
     primary_provider = False
+    fallback_agent = ['com.plexapp.agents.gayporncollector']
     contributes_to = ['com.plexapp.agents.cockporn']
 
     def Log(self, message, *args):
