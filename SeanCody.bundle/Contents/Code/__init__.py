@@ -80,8 +80,9 @@ class SeanCody(Agent.Movies):
                      'the expected format.', file_title)
             return
 
-        groups = m.groupdict()
-        sanitized_name = re.sub(' +', '', re.sub('[^a-z0-9]', '', file_title))
+        # sanitize the file name by removing special characters and replacing
+        # them with spaces, then collapse the spaces
+        sanitized_name = re.sub(' +', ' ', re.sub('[^a-z0-9]', '', file_title))
 
         # Get the slug and title from the sanitized name
         m = re.search(r"(sc)?(?P<slug>[0-9]+)\s*(?P<title>.+)$",
@@ -91,13 +92,13 @@ class SeanCody(Agent.Movies):
             return
 
         slug = m.group('slug')
-        file_title = m.group('title')
+        file_title = re.sub(' ?[0-9]{3,4}p', '', m.group('title'))
         self.Log('SEARCH - Sanitized Name: %s', sanitized_name)
         self.Log('SEARCH - Slug: %s', slug)
         self.Log('SEARCH - File Title: %s', file_title)
         self.Log('SEARCH - Split File Title: %s' % file_title.split(' '))
 
-        movie_url = BASE_TOUR_MOVIE_URL % (groups['clip_number'], file_title)
+        movie_url = BASE_TOUR_MOVIE_URL % (slug, file_title)
 
         self.Log('SEARCH - Video URL: %s', movie_url)
         try:
