@@ -92,6 +92,7 @@ class SeanCody(Agent.Movies):
             return
 
         slug = m.group('slug')
+        # remove the resolution from the end and strip spacing
         file_title = re.sub('[0-9]{3,4}p', '', m.group('title')).strip()
         self.Log('SEARCH - Sanitized Name: %s', sanitized_name)
         self.Log('SEARCH - Slug: %s', slug)
@@ -116,18 +117,22 @@ class SeanCody(Agent.Movies):
     def fetch_summary(self, html, metadata):
         raw_about_text = html.xpath('//*[@id="description"]/p')
         self.Log('UPDATE - About Text - RAW %s', raw_about_text)
-        about_text = ' '.join(str(x.text_content().strip()) for x in raw_about_text)
+        about_text = ' '.join(str(x.text_content().strip())
+                              for x in raw_about_text)
         metadata.summary = about_text
 
     def fetch_release_date(self, html, metadata):
-        release_date = html.xpath('//*[@id="player-wrapper"]/div/span/time/text()')[0].strip()
+        release_date = html.xpath('//*[@id="player-wrapper"]/div/span/time/'
+                                  'text()')[0].strip()
         self.Log('UPDATE - Release Date - New: %s' % release_date)
-        metadata.originally_available_at = Datetime.ParseDate(release_date).date()
+        metadata.originally_available_at = \
+            Datetime.ParseDate(release_date).date()
         metadata.year = metadata.originally_available_at.year
 
     def fetch_roles(self, html, metadata):
         metadata.roles.clear()
-        htmlcast = html.xpath('//*[@id="scroll"]/div[2]/ul[2]/li/a/span/text()')
+        htmlcast = html.xpath('//*[@id="scroll"]/div[2]/ul[2]/li/a/span/'
+                              'text()')
         self.Log('UPDATE - cast: "%s"' % htmlcast)
         for cast in htmlcast:
             cname = cast.strip()
@@ -149,10 +154,12 @@ class SeanCody(Agent.Movies):
 
         # convert the gallery source variable to parseable JSON and then
         # grab the useful bits out of it
-        gallery_info = json.loads(html.xpath('/html/body/div[1]/div/div/section[2]/div/script/text()')[0].
-            replace('\n', '').
-            replace('var gallerySource = ', '').
-            replace('};', '}'))
+        gallery_info = \
+            json.loads(html.xpath('/html/body/div[1]/div/div/section[2]/div/'
+                                  'script/text()')[0].
+                       replace('\n', '').
+                       replace('var gallerySource = ', '').
+                       replace('};', '}'))
 
         try:
             coverPrefs = int(Prefs['cover'])
@@ -178,7 +185,8 @@ class SeanCody(Agent.Movies):
             if poster_url not in metadata.posters:
                 try:
                     i += 1
-                    metadata.posters[poster_url] = Proxy.Preview(HTTP.Request(thumb_url), sort_order=i)
+                    metadata.posters[poster_url] = \
+                        Proxy.Preview(HTTP.Request(thumb_url), sort_order=i)
                 except:
                     pass
 
