@@ -82,7 +82,7 @@ class SeanCody(Agent.Movies):
 
         # sanitize the file name by removing special character sequences and
         # replacing each sequence with a space
-        sanitized_name = re.sub('[^a-z0-9 ]+', ' ', file_title)
+        sanitized_name = re.sub('[^a-z0-9]+', ' ', file_title)
 
         # Get the slug and title from the sanitized name
         m = re.search(r"(sc)?(?P<slug>[0-9]+)\s*(?P<title>.+)$",
