@@ -92,7 +92,7 @@ class SeanCody(Agent.Movies):
             return
 
         slug = m.group('slug')
-        file_title = re.sub(' ?[0-9]{3,4}p', '', m.group('title'))
+        file_title = re.sub('[0-9]{3,4}p', '', m.group('title')).strip()
         self.Log('SEARCH - Sanitized Name: %s', sanitized_name)
         self.Log('SEARCH - Slug: %s', slug)
         self.Log('SEARCH - File Title: %s', file_title)
