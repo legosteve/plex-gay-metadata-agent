@@ -84,7 +84,8 @@ class SeanCody(Agent.Movies):
         sanitized_name = re.sub(' +', '', re.sub('[^a-z0-9]', '', file_title))
 
         # Get the slug and title from the sanitized name
-        m = re.search(r"(sc)?(?P<slug>[0-9]+)\s*(?P<title>.+)$")
+        m = re.search(r"(sc)?(?P<slug>[0-9]+)\s*(?P<title>.+)$",
+                      sanitized_name)
         if not m:
             self.Log('Unable to get slug and title from name!')
             return
