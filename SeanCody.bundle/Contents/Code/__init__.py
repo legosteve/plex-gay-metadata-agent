@@ -183,7 +183,7 @@ class SeanCody(Agent.Movies):
             if i > coverPrefs:
                 break
 
-            thumb_url = image.get('src')
+            thumb_url = "http:" + image.get('src')
             poster_url = thumb_url
 
             valid_image_names.append(thumb_url)
