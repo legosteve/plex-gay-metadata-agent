@@ -161,43 +161,42 @@ class SeanCody(Agent.Movies):
 
         # convert the gallery source variable to parseable JSON and then
         # grab the useful bits out of it
-        gallery_info = \
-            json.loads(html.xpath('/html/body/div[1]/div/div/section[2]/div/'
-                                  'script/text()')[0].
-                       replace('\n', '').
-                       replace('var gallerySource = ', '').
-                       replace('};', '}'))
+        valid_image_names = []
+
+        try:
+            image_list = html.xpath('//section[@class="photo-gallery"]/div/'
+                                    'div/div/ul/li/a/img')
+        except Exception, ex:
+            self.Log("Exception raised while getting gallery info: %s" % ex)
+            return valid_image_names
+
+        gallery_length = len(image_list)
+        self.Log("Got %d images in gallery." % gallery_length)
 
         try:
             coverPrefs = int(Prefs['cover'])
         except ValueError:
-            # an absurdly high number means "download all the things"
-            coverPrefs = 10000
+            coverPrefs = gallery_length
 
-        thumb_path = gallery_info['thumb']['path']
-        thumb_hash = gallery_info['thumb']['hash']
-        poster_path = gallery_info['fullsize']['path']
-        poster_hash = gallery_info['fullsize']['hash']
-        gallery_length = int(gallery_info['length'])
-        valid_image_names = []
-
-        for i in xrange(1, gallery_length + 1):
+        i = 0
+        for image in image_list:
             if i > coverPrefs:
                 break
 
-            thumb_url = "%s%02d.jpg%s" % (thumb_path, i, thumb_hash)
-            poster_url = "%s%02d.jpg%s" % (poster_path, i, poster_hash)
+            thumb_url = image.get('src')
+            poster_url = thumb_url
 
-            valid_image_names.append(poster_url)
+            valid_image_names.append(thumb_url)
             if poster_url not in metadata.posters:
                 try:
                     i += 1
                     metadata.posters[poster_url] = \
                         Proxy.Preview(HTTP.Request(thumb_url), sort_order=i)
                 except:
-                    pass
+                    self.Log("Error getting thumb at %s" % thumb_url)
 
         return valid_image_names
+
 
     def update(self, metadata, media, lang, force=False):
         self.Log('UPDATE CALLED')
