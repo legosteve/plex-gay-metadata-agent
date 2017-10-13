@@ -99,14 +99,21 @@ class SeanCody(Agent.Movies):
         self.Log('SEARCH - File Title: %s', file_title)
         self.Log('SEARCH - Split File Title: %s' % file_title.split(' '))
 
+        file_title = file_title.replace(' ', '-')
         movie_url = BASE_TOUR_MOVIE_URL % (slug, file_title)
 
         self.Log('SEARCH - Video URL: %s', movie_url)
         try:
             html = HTML.ElementFromURL(movie_url, sleep=REQUEST_DELAY)
         except:
-            self.Log("SEARCH - Title not found: %s" % movie_url)
-            return
+            file_title = file_title + "-bareback"
+            movie_url = BASE_TOUR_MOVIE_URL % (slug, file_title)
+            self.Log('SEARCH - Video URL: %s', movie_url)
+            try:
+                html = HTML.ElementFromURL(movie_url, sleep=REQUEST_DELAY)
+            except:
+                self.Log("SEARCH - Title not found: %s" % movie_url)
+                return
 
         movie_name = html.xpath('//*[@id="player-wrapper"]/div/h1/text()')[0]
         self.Log('SEARCH - title: %s', movie_name)
