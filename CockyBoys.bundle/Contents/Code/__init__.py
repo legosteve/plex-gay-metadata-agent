@@ -1,11 +1,11 @@
-# CorbinFisher
+# CockyBoys
 from selenium import webdriver
 from time import sleep
 from lxml import html as tree
 import re
 import os
 
-PLUGIN_LOG_TITLE = 'CorbinFisher'
+PLUGIN_LOG_TITLE = 'CockyBoys'
 VERSION_NO = '2016.06.10.1'
 
 # Delay used when requesting HTML, may be good to have to prevent being banned
@@ -13,17 +13,17 @@ VERSION_NO = '2016.06.10.1'
 REQUEST_DELAY = 0
 
 # URLS
-BASE_URL = 'https://www.corbinfisher.com%s'
+BASE_URL = 'https://www.cockyboys.com%s'
 
 # Example Video Details URL
-BASE_VIDEO_DETAILS_URL = BASE_URL % '/#home/episode/%s'
+# https://cockyboys.com/scenes/JUST-ONE-NIGHT-Boomer-Banks-Michael-DelRay.html?type=vids
+BASE_VIDEO_DETAILS_URL = BASE_URL % '/scenes/%s'
 
 # Example Search URL:
-BASE_SEARCH_URL = BASE_URL % '/#search?pager=1&q=%s&type=0&guid='
-SLUG_REGEX = re.compile(r"(?P<studio>)corbin ?fisher ?- ?"
-                        r"(?P<slug>(acm|acs|cfs)-[^ ]+) ?- ?"
+# https://cockyboys.com/search.php?query=ggg
+BASE_SEARCH_URL = BASE_URL % '/search.php?query=%s'
+SLUG_REGEX = re.compile(r"(?P<studio>)cockyboys ?- ?"
                         r"(?P<clip_name>[^\\[]+)")
-
 
 def Start():
     HTTP.CacheTime = CACHE_1WEEK
@@ -31,9 +31,8 @@ def Start():
         "Windows NT 6.2; Trident/4.0; SLCC2; .NET CLR 2.0.50727; " \
         ".NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0)"
 
-
-class CorbinFisher(Agent.Movies):
-    name = 'CorbinFisher'
+class CockBoys(Agent.Movies):
+    name = 'CockyBoys'
     languages = [Locale.Language.NoLanguage, Locale.Language.English]
     primary_provider = False
     fallback_agent = ['com.plexapp.agents.gayporncollector']
@@ -230,9 +229,7 @@ class CorbinFisher(Agent.Movies):
         return valid_image_names
 
     def fetch_summary(self, html, metadata):
-        raw_about_text = html.xpath('//*[@id="bootstrapModal"]/div/div/'
-                                    'section/div[2]/div[4]/div[1]/article/'
-                                    'p/text()')
+        raw_about_text = html.xpath('//*[@id="movieDesc"]/div/h2/text()')
 
         self.Log('UPDATE - About Text - RAW %s', raw_about_text)
         about_text = "\n".join(raw_about_text)
