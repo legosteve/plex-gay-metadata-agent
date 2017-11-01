@@ -214,9 +214,9 @@ class SeanCody(Agent.Movies):
         # Set tagline to URL
         metadata.tagline = metadata.id
 
-        # The Title
-        video_title = html.xpath('//*[@id="player-wrapper"]/div/h1/text()')[0]
-
+        # Set title to movie_name
+        metadata.title = movie_name
+        
         # Try to get description text
         try:
             self.fetch_summary(html, metadata)
@@ -244,6 +244,8 @@ class SeanCody(Agent.Movies):
         valid_image_names = self.fetch_gallery(html, metadata)
         metadata.posters.validate_keys(valid_image_names)
 
+        # Set Content Rating to X
         metadata.content_rating = 'X'
-        metadata.title = video_title
-        metadata.studio = "Sean Cody"
+        
+        # Set Studio to Sean Cody
+        metadata.studio = 'Sean Cody'
