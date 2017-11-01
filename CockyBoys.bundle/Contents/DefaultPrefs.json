@@ -3,13 +3,13 @@
         "id": "folders",
         "label": "Folders where these items might be found (comma-separated list)",
         "type": "text",
-        "default": "Corbin Fisher"
+        "default": "CockyBoys"
     },
     {
         "id": "regex",
         "label": "Regular expression to match files by. Must contain named groups for clip number and clip name.",
         "type": "text",
-        "default": "(?P<studio>)corbin ?fisher ?- ?(?P<cf_studio>ac[ms]?)(?P<clip_number>[0-9]+) ?- ?(?P<clip_name>[^\\[]+)"
+        "default": "(?P<clip_name>[^\\[]+)"
     },
     {
         "id": "cover",
