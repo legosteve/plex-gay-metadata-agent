@@ -74,6 +74,8 @@ class SeanCody(Agent.Movies):
                          final_dir, ','.join(folder_list))
                 return
 
+        # Checks that the file title matches the pattern estalished in the
+        # DefaultPref.json
         m = movie_pattern.search(file_title)
         if not m:
             self.Log('SEARCH - Skipping %s because the file name is not in '
@@ -100,7 +102,13 @@ class SeanCody(Agent.Movies):
         self.Log('SEARCH - Split File Title: %s' % file_title.split(' '))
 
         file_title = file_title.replace(' ', '-')
-        movie_url = BASE_TOUR_MOVIE_URL % (slug, file_title)
+
+        # file_title isn't required to make the movie_url validate_keys
+        # http://www.seancody.com/tour/movie/9291/x/trailer/
+        # works as well as
+        # http://www.seancody.com/tour/movie/9291/brodie-cole-bareback/trailer/
+        # so have removed it to simplify things.
+        movie_url = BASE_TOUR_MOVIE_URL % (slug, 'x')
 
         self.Log('SEARCH - Video URL: %s', movie_url)
         try:
@@ -216,7 +224,7 @@ class SeanCody(Agent.Movies):
 
         # Set title to movie_name
         metadata.title = movie_name
-        
+
         # Try to get description text
         try:
             self.fetch_summary(html, metadata)
@@ -246,6 +254,6 @@ class SeanCody(Agent.Movies):
 
         # Set Content Rating to X
         metadata.content_rating = 'X'
-        
+
         # Set Studio to Sean Cody
         metadata.studio = 'Sean Cody'
