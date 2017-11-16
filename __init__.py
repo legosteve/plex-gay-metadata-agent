@@ -90,7 +90,7 @@ class SeanCody(Agent.Movies):
             self.Log("SEARCH - Title not found: %s" % movie_url)
             return
 
-    def fetch_movie_name = html.xpath('//*[@id="player-wrapper"]/div/h1/text()')[0]
+        movie_name = html.xpath('//*[@id="player-wrapper"]/div/h1/text()')[0]
         self.Log('SEARCH - title: %s' % movie_name)
         results.Append(MetadataSearchResult(id=movie_url, name=movie_name, score=100, lang=lang))
         return
@@ -173,7 +173,6 @@ class SeanCody(Agent.Movies):
             return
 
         file_path = media.items[0].parts[0].file
-        self.Log('UPDATE - Video Title: %s', movie_name)
         self.Log('UPDATE - File Path: %s', file_path)
         self.Log('UPDATE - Video URL: %s', metadata.id)
 
