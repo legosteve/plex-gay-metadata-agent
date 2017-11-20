@@ -1,5 +1,10 @@
 # Staxus
-import re, os, platform, urllib, cgi
+import re
+import os
+import platform
+import urllib
+import cgi
+
 PLUGIN_LOG_TITLE='Staxus'	# Log Title
 
 VERSION_NO = '2017.07.26.0'
