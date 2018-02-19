@@ -51,6 +51,18 @@ NONE OF THE FILENAMES FOR THE ADGENTS BELOW ARE CASE SENSITIVE.
 	- Unable to get metadata for bonus material from other sites.
 	- Autoupdate may cause issues as it may cause a full metadata refresh when a new file is added.
 
+<h1>RawFuckClub.bundle</h1>
+	NAMING CONVENTION:
+		Enclosing directory: Can be defined in settings, but "Raw Fuck Club" is recommended
+		Video Naming:
+		- `{title}`
+		The scene name exactly as it appears on rawfuckclub.com are required for the best matching results.
+
+	KNOWN ISSUES:
+	- None at this time
+
+	By default, this matcher only runs on items in a directory named "Raw Fuck Club". This is configurable in the agent settings.
+
 <h1>SeanCody.bundle</h1>
 	NAMING CONVENTION:
 		Enclosing directory: Can be defined in settings
