@@ -1,8 +1,13 @@
 <h1>plex-gay-metadata-agent</h1>
+<h1>Overview</h1>
 A Plex agent for fetching gay adult video metadata. https://forums.plex.tv/discussion/32922/adult-agents-for-gay-titles
 
+<h1>Versioning</h1>
+Calendar Versioning is used for this software. YYYY.0M.0D.micro Zero-padded month and day. Note that if there are multiple updates within the same day micro versions are used, these are patches.
 
-<h1>INSTALLATION</h1>
+Example 2019.01.05.0 - meaning January 5th, 2019 with 0 patches for the software for that day.
+
+<h1>How to install</h1>
 1. Copy the Cockporn.bundle and any required site specific agents into the Plex Server plug-ins directory<br />
 	<b>Mac:</b> ~/Library/Application Support/Plex Media Server/Plug-ins/<br />
 	<b>QNAP:</b> /root/Library/Plex\ Media\ Server/Plug-ins/<br />
