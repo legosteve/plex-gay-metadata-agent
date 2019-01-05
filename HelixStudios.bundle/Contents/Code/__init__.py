@@ -4,7 +4,7 @@ from difflib import SequenceMatcher
 
 PLUGIN_LOG_TITLE = 'Helix Studios'	# Log Title
 
-VERSION_NO = '2017.07.26.0'
+VERSION_NO = '2019.01.05.0'
 
 # Delay used when requesting HTML, may be good to have to prevent being
 # banned from the site
@@ -96,10 +96,11 @@ class HelixStudios(Agent.Movies):
 		self.Log('SEARCH - File Name: %s', basename)
 
 		groups = m.groupdict()
-		movie_url_name = re.sub('\s+', '+', groups['clip_name'])
-		movie_url = BASE_SEARCH_URL + movie_url_name
+		clip_name = groups['clip_name']
+		movie_url_name = re.sub('\s+', '+', clip_name)
+		movie_url = BASE_SEARCH_URL % movie_url_name
 		search_query_raw = list()
-		for piece in groups['clip_name'].split(' '):
+		for piece in clip_name.split(' '):
 			if re.search('^[0-9A-Za-z]*$', piece.replace('!', '')) is not None:
 				search_query_raw.append(piece)
 
@@ -117,21 +118,21 @@ class HelixStudios(Agent.Movies):
 				video_title = re.sub("\s{2,4}", ' ', video_title)
 				video_title = video_title.rstrip(' ')
 
-				self.Log('SEARCH - video title percentage: %s', self.similar(video_title.lower(), basename.lower()))
+				self.Log('SEARCH - video title percentage: %s', self.similar(video_title.lower(), clip_name.lower()))
 
 				self.Log('SEARCH - video title: %s', video_title)
 				# Check the alt tag which includes the full title with special characters against the video title. If we match we nominate the result as the proper metadata. If we don't match we reply with a low score.
-				#if video_title.lower() == basename.lower():
-				if self.similar(video_title.lower(), basename.lower()) > 0.90:
+				#if video_title.lower() == clip_name.lower():
+				if self.similar(video_title.lower(), clip_name.lower()) > 0.90:
 					video_url=result.find('a').get('href')
 					self.Log('SEARCH - video url: %s', video_url)
 					self.rating = result.find('.//*[@class="current-rating"]').text.strip('Currently ').strip('/5 Stars')
 					self.Log('SEARCH - rating: %s', self.rating)
-					self.Log('SEARCH - Exact Match "' + basename.lower() + '" == "%s"', video_title.lower())
+					self.Log('SEARCH - Exact Match "' + clip_name.lower() + '" == "%s"', video_title.lower())
 					results.Append(MetadataSearchResult(id = video_url, name = video_title, score = 100, lang = lang))
 					return
 				else:
-					self.Log('SEARCH - Title not found "' + basename.lower() + '" != "%s"', video_title.lower())
+					self.Log('SEARCH - Title not found "' + clip_name.lower() + '" != "%s"', video_title.lower())
 					score=score-1
 					results.Append(MetadataSearchResult(id = '', name = media.filename, score = score, lang = lang))
 		else:
@@ -145,16 +146,16 @@ class HelixStudios(Agent.Movies):
 					video_title = re.sub("[\:\?\|]", '', video_title)
 					video_title = video_title.rstrip(' ')
 					self.Log('SEARCH - video title: %s', video_title)
-					if video_title.lower() == basename.lower():
+					if video_title.lower() == clip_name.lower():
 						video_url=result.find('a').get('href')
 						self.Log('SEARCH - video url: %s', video_url)
 						self.rating = result.find('.//*[@class="current-rating"]').text.strip('Currently ').strip('/5 Stars')
 						self.Log('SEARCH - rating: %s', self.rating)
-						self.Log('SEARCH - Exact Match "' + basename.lower() + '" == "%s"', video_title.lower())
+						self.Log('SEARCH - Exact Match "' + clip_name.lower() + '" == "%s"', video_title.lower())
 						results.Append(MetadataSearchResult(id = video_url, name = video_title, score = 100, lang = lang))
 						return
 					else:
-						self.Log('SEARCH - Title not found "' + basename.lower() + '" != "%s"', video_title.lower())
+						self.Log('SEARCH - Title not found "' + clip_name.lower() + '" != "%s"', video_title.lower())
 						score=score-1
 						results.Append(MetadataSearchResult(id = '', name = media.filename, score = score, lang = lang))
 			else:
@@ -168,20 +169,20 @@ class HelixStudios(Agent.Movies):
 						video_title = re.sub("[\:\?\|]", '', video_title)
 						video_title = video_title.rstrip(' ')
 						self.Log('SEARCH - video title: %s', video_title)
-						if video_title.lower() == basename.lower():
+						if video_title.lower() == clip_name.lower():
 							video_url=result.find('a').get('href')
 							self.Log('SEARCH - video url: %s', video_url)
 							self.rating = result.find('.//*[@class="current-rating"]').text.strip('Currently ').strip('/5 Stars')
 							self.Log('SEARCH - rating: %s', self.rating)
-							self.Log('SEARCH - Exact Match "' + basename.lower() + '" == "%s"', video_title.lower())
+							self.Log('SEARCH - Exact Match "' + clip_name.lower() + '" == "%s"', video_title.lower())
 							results.Append(MetadataSearchResult(id = video_url, name = video_title, score = 100, lang = lang))
 							return
 						else:
-							self.Log('SEARCH - Title not found "' + basename.lower() + '" != "%s"', video_title.lower())
+							self.Log('SEARCH - Title not found "' + clip_name.lower() + '" != "%s"', video_title.lower())
 							results.Append(MetadataSearchResult(id = '', name = media.filename, score = 1, lang = lang))
 				else:
 					score=1
-					self.Log('SEARCH - Title not found "' + basename.lower() + '" != "%s"', video_title.lower())
+					self.Log('SEARCH - Title not found "' + clip_name.lower() + '" != "%s"', video_title.lower())
 					return
 
 	def update(self, metadata, media, lang, force=False):
