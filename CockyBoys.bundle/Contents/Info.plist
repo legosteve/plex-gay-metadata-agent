@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CBBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CBBundleExecutable</key>
+	<string>CockyBoys</string>
+	<key>CBBundleIdentifier</key>
+	<string>com.plexapp.agents.cockyboys</string>
+	<key>PlexAgentAttributionText</key>
+	<string>
+		&lt;a href=&quot;https://github.com/iklier/plex-gay-metadata-agent&quot;&gt;CockPorn&lt;/a&gt; is a free adgent for CockyBoys.&lt;br/&gt;
+		CockyBoys
+	</string>
+	<key>CBBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CBBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CBBundleSignature</key>
+	<string>????</string>
+	<key>CBBundleVersion</key>
+	<string>1.0</string>
+	<key>PlexFrameworkVersion</key>
+	<string>2</string>
+	<key>PlexPluginClass</key>
+	<string>Agent</string>
+	<key>PlexPluginMode</key>
+	<string>AlwaysOn</string>
+</dict>
+</plist>

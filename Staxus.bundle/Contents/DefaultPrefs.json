@@ -3,13 +3,13 @@
 		"id": "folders",
 		"label": "Folders where these items might be found (comma-separated list) or all folders use *",
 		"type": "text",
-		"default": "staxus"
+		"default": "Staxus"
 	},
 	{
     "id": "regex",
     "label": "Regular expression to match files by. Must contain named groups for clip number and clip name.",
     "type": "text",
-    "default": "^(?P<studio>staxus)?[ \\-sc]*(?P<clip_number>[0-9]+)[ \\-]*(?P<clip_name>.+?)"
+    "default": "^(?P<studio>staxus)?[ \\-sx]*(?P<clip_number>[0-9]+)[ \\-]*(?P<clip_name>.+?)"
   },
 	{
     "id": "cover",

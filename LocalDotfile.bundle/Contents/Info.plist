@@ -5,13 +5,12 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>Sean Cody</string>
+	<string>Local Dotfile</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.plexapp.agents.seancody</string>
+	<string>com.plexapp.agents.localdotfile</string>
 	<key>PlexAgentAttributionText</key>
 	<string>
-		&lt;a href=&quot;https://github.com/iklier/plex-gay-metadata-agent&quot;&gt;CockPorn&lt;/a&gt; is a free agent for Sean Cody.&lt;br/&gt;
-		Check out sexy twinks and amateur jocks give blowjobs and swallow cum in anal sex videos with sexy gay men and even straight guys.
+		Read metadata from JSON-formatted dotfile.
 	</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
