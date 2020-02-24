@@ -27,6 +27,7 @@ class RawFuckClub(Agent.Movies):
   name = 'Raw Fuck Club'
   languages = [Locale.Language.English]
   primary_provider = False
+  fallback_agent = ['com.plexapp.agents.aebn']
   contributes_to = ['com.plexapp.agents.cockporn']
   
   def Log(self, message, *args):
@@ -68,21 +69,25 @@ class RawFuckClub(Agent.Movies):
       self.Log('SEARCH - Skipping %s because the file name is not in the expected format.', file_name)
       return
 
+    groups = m.groupdict()
+    clip_name = groups['clip_name']
+    clean_clip_name = re.sub('[^A-Za-z0-9]+', ' ', clip_name)
+    self.Log('SEARCH - Clean clip name: %s', clean_clip_name)
     search_query_raw = list()
-    for piece in file_name.split(' '):
+    for piece in clean_clip_name.split(' '):
         search_query_raw.append(cgi.escape(piece))
 
     search_query="+".join(search_query_raw)
     self.Log('SEARCH - Search Query: %s', search_query)
     html=HTML.ElementFromURL(BASE_SEARCH_URL % search_query, sleep=REQUEST_DELAY)
     score=10
-    search_results=html.xpath('//*[@id="browse_entries"]/div')
+    search_results=html.xpath('//div[@id="browse_entries"]//div[contains(@class, "last-update-title")]')
 
     if len(search_results) > 0:
       self.Log('SEARCH - results size exact match: %s', len(search_results))
       for result in search_results:
-        video_title = result.xpath('a[1]/h3/text()')
-        video_url = BASE_ITEM_URL + result.xpath('a[1]/@href')[0]
+        video_title = result.xpath('//div[@class="last-update-title"]/a/text()')[0].strip()
+        video_url = BASE_ITEM_URL + result.xpath('//div[@class="last-update-title"]/a/@href')[0]
         self.Log('SEARCH - Exact video title: %s', video_title)
         self.Log('SEARCH - Exact video URL: %s', video_url)
         results.Append(MetadataSearchResult(id = video_url, name = video_title, score = 98, lang = lang))
@@ -90,42 +95,31 @@ class RawFuckClub(Agent.Movies):
     else:
       self.Log('SEARCH - Results size: %s', len(search_results))
       for result in search_results:
-        video_title = result.findall('div[@id="browse_entries"]/div/a[1]/h3/text()')
+        video_title = result.findall('div[@class="last-update-title"]/a/text()')
         video_title = video_title.lstrip(' ') #Removes white spaces on the left end.
         video_title = video_title.rstrip(' ') #Removes white spaces on the right end.
         video_title = video_title.replace(':', '')
         self.Log('SEARCH - Video title: %s', video_title)
       return
 
-  def fetch_title(self, html, file_name):
-    self.Log('UPDATE: fetch_title CALLED')
-    video_title = [0, 1]
-    if file_name.find("scene") > 0:
-      self.Log('UPDATE - There are scenes in the filename')
-      return
-    else:
-      self.Log('UPDATE - Getting title of video')
-      video_title[0] = html.xpath('//*[@id="browse_entries"]/div/a[1]/h3/text()')
-      return video_title
-    video_title = title(self, html, file_name)
-    self.Log('UPDATE - Video_title: "%s"' % video_title[0])
-
   def fetch_date(self, html, metadata):
     self.Log('UPDATE: fetch_date CALLED')
-    release_date = html.xpath('//*[@id="watch_postdate"]/text()')[0].strip()
-    self.Log('UPDATE - Release Date: %s' % release_date)
-
-    #date_original = datetime.datetime.strptime(release_date, '%Y-%m-%d').strftime('%b %-d, %Y')
-    date_original = Datetime.ParseDate(release_date).date()
-    self.Log('UPDATE - Reformatted Release Date: %s' % date_original)
-
-    metadata.originally_available_at = date_original
-    metadata.year = metadata.originally_available_at.year
+    try:
+      release_date = html.xpath('substring-after(//*[@class="watch-published-date"], "Published on ")')
+      self.Log('UPDATE - Release Date: %s' % release_date)
+      #date_original = datetime.datetime.strptime(release_date, '%Y-%m-%d').strftime('%b %-d, %Y')
+      date_original = Datetime.ParseDate(release_date).date()
+      self.Log('UPDATE - Reformatted Release Date: %s' % date_original)
+      metadata.originally_available_at = date_original
+      metadata.year = metadata.originally_available_at.year
+    except Exception as e:
+      self.Log('UPDATE - Error getting release date: %s', e)
+      pass
 
   def fetch_summary(self, html, metadata):
     self.Log('UPDATE: fetch_summary CALLED')
     try:
-      video_summary=html.xpath('//*[@id="watch_description"]/text()')[0]
+      video_summary=html.xpath('//p[@class="watch-description"]/text()')[0].strip()
       self.Log('UPDATE - Summary: %s', video_summary)
       metadata.summary = video_summary
     except Exception as e:
@@ -135,7 +129,7 @@ class RawFuckClub(Agent.Movies):
   def fetch_cast(self, html, metadata):
     self.Log('UPDATE: fetch_cast CALLED')
     try:
-      video_cast=html.xpath('//*[@id="watch_actors_items"]/ul/li/a/text()')
+      video_cast=html.xpath('//*[contains(@class, "badge-primary")]/text()')  
       self.Log('UPDATE - Cast: "%s"' % video_cast)
       metadata.roles.clear()
       for cast in video_cast:
@@ -150,9 +144,8 @@ class RawFuckClub(Agent.Movies):
   def fetch_genres(self, html, metadata):
     self.Log('UPDATE: fetch_genres CALLED')
     metadata.genres.clear()
-    genres = html.xpath('//*[@id="watch_categories_items"]/ul/li/a/text()')
+    genres = html.xpath('//*[contains(@class, "tag-badges")]//*[contains(@class, "badge-secondary")]/text()')
     self.Log('UPDATE - Genres: "%s"' % genres)
-    metadata.genres.add('Bareback')
     for genre in genres:
       genre = genre.strip()
       if (len(genre) > 0):
@@ -170,7 +163,7 @@ class RawFuckClub(Agent.Movies):
 
     valid_image_names = []
 
-    images = html.xpath('//*[@id="watch_stills"]/div[@class="watchphoto"]/img/@src')
+    images = html.xpath('//*[contains(@class, "watch-slide")]//img/@src')
     self.Log('UPDATE - Image URLs: "%s"' % images)
 
     for image in images:
@@ -206,15 +199,19 @@ class RawFuckClub(Agent.Movies):
     # Set tagline to URL
     metadata.tagline = url
 
+    video_title = html.xpath('//div[@class="row row-watch-metadata"]//h2/text()')[0]
+    self.Log('UPDATE - video_title: "%s"' % video_title)
+
     # Set additional metadata
     metadata.content_rating = 'X'
     metadata.studio = "Raw Fuck Club"
+    metadata.title = video_title
 
     # Try to get the title
-    try:
-      self.fetch_title(html, metadata)
-    except:
-      pass
+    # try:
+    #   self.fetch_title(html, metadata)
+    # except:
+    #   pass
 
     # Try to get the release date
     try:
